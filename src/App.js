@@ -4,29 +4,31 @@ import "./App.css";
 
 class App extends Component {
   constructor() {
-    super();
+    super()
 
     this.state = {
-      monsters: [
-        {
-          name: "Linda",
-          id: "12e1231e",
-        },
-        {
-          name: "Frank",
-          id: "12ed2dacas",
-        },
-        {
-          name: "Jacky",
-          id: "1231e",
-        },
-        {
-          name: "Andrei",
-          id: "12e1e231",
-        },
-      ],
+      monsters: [],
     };
   }
+
+  componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      // Convert response into json, so it can be used
+      .then((response) => response.json())
+      // After resolve of above promise we will set 
+      // the users to our initially empty state
+      .then((users) =>
+        this.setState(
+          () => {
+            return { monsters: users }
+          },
+          () => {
+            console.log(this.state)
+          }
+        )
+      )
+  }
+
   render() {
     return (
       <div className="App">
@@ -38,7 +40,7 @@ class App extends Component {
           )
         })}
       </div>
-    );
+    )
   }
 }
 
