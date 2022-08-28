@@ -8,6 +8,7 @@ class App extends Component {
 
     this.state = {
       monsters: [],
+      searchField: ''
     };
   }
 
@@ -30,6 +31,12 @@ class App extends Component {
   }
 
   render() {
+    // We filter monsters list here and not inside the onChange event callback
+    // because while filtering we need the original monster list in the memory
+    // and only need the new array created by .filter() method
+    const filteredMonsters = this.state.monsters.filter((monster) => {
+      return monster.name.toLocaleLowerCase().includes(this.state.searchField)
+    })
     return (
       <div className="App">
         <input
@@ -37,21 +44,18 @@ class App extends Component {
           type="search"
           placeholder="Search Monsters"
           onChange={(event) => {
-            const eventString = event.target.value.toLocaleLowerCase()
-            const newMonsters = this.state.monsters.filter((monster) => {
-              return monster.name.toLocaleLowerCase().includes(eventString)
-            })
+            // Here when input value changes we only update the searchField state
+            // so that we can keep the original monster list state and
+            // only change the filtering value
+            const searchField = event.target.value.toLocaleLowerCase()
             this.setState(
               () => {
-                return { monsters: newMonsters }
-              },
-              () => {
-                console.log(this.state)
+                return { searchField }
               }
             )
           }}
         />
-        {this.state.monsters.map((monster) => {
+        {filteredMonsters.map((monster) => {
           return (
             <div key={monster.id}>
               <h1>{monster.name}</h1>
