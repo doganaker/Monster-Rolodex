@@ -30,12 +30,30 @@ class App extends Component {
       );
   }
 
+  // With this optimization this function will only build once when this
+  // class is initialized for the first time
+  onSearchChange = (event) => {
+    // Here when input value changes we only update the searchField state
+    // so that we can keep the original monster list state and
+    // only change the filtering value
+    const searchField = event.target.value.toLocaleLowerCase()
+    this.setState(
+      () => {
+        return { searchField }
+      }
+    )
+  }
+
   render() {
+
+    const { monsters, searchField } = this.state
+    const { onSearchChange } = this
+
     // We filter monsters list here and not inside the onChange event callback
     // because while filtering we need the original monster list in the memory
     // and only need the new array created by .filter() method
-    const filteredMonsters = this.state.monsters.filter((monster) => {
-      return monster.name.toLocaleLowerCase().includes(this.state.searchField)
+    const filteredMonsters = monsters.filter((monster) => {
+      return monster.name.toLocaleLowerCase().includes(searchField)
     })
     return (
       <div className="App">
@@ -43,17 +61,7 @@ class App extends Component {
           className="search-box"
           type="search"
           placeholder="Search Monsters"
-          onChange={(event) => {
-            // Here when input value changes we only update the searchField state
-            // so that we can keep the original monster list state and
-            // only change the filtering value
-            const searchField = event.target.value.toLocaleLowerCase()
-            this.setState(
-              () => {
-                return { searchField }
-              }
-            )
-          }}
+          onChange={onSearchChange}
         />
         {filteredMonsters.map((monster) => {
           return (
